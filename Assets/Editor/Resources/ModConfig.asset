@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
+  m_Name: ModConfig
+  m_EditorClassIdentifier: 
+  id: QuadButtonRegular
+  title: Quadruple Simpleton
+  author: "M\xE1sQu\xE9\xC9lite"
+  description: "I needed some more buttons. So I just made them.\n\nHTML: https://ktane.timwi.de/HTML/Quadruple%20Simpleton.html\r\nPDF:
+    https://ktane.timwi.de/PDF/Quadruple%20Simpleton.pdf\r\n\r\nQuadruple Simpleton
+    (QuadButtonRegular) v1.2.9\nModule by M\xE1sQu\xE9\xC9lite, maintained by eXish\r\nTwitch
+    Plays and Rule Seed supported"
+  version: 1.2.9
+  outputFolder: build
+  previewImage: {fileID: 2800000, guid: 8c5728c3aba52bc4385bd9e5ff1c8036, type: 3}

@@ -1,0 +1,182 @@
+﻿//Adapted from .NET 6, C# 10
+//Renamed to a *.txt to avoid the compilation of this file; feel free to change it back to a .cs
+using System;
+using System.Collections.Generic;
+
+namespace testQSimp
+{
+    internal class Program
+    {
+        /* Quick Tour:
+         * Main holds all the tests that are done. The last one done is about MirrorX(Public)
+         * There is not much to talk about ParseCommandNumbers
+         * To understand MirrorX, please read these functions in this order:
+         * - MirrorXHardcoded
+         * - MirrorXGeneralised
+         * - MirrorXReduced
+         * - MirrorX
+         * I you still don't understand MirrorX, I can offer an explanation in vc
+         */
+        static void Main(string[] args)
+        {
+            /*
+            var input = "216 38".Split().ToList();
+            var output = ParseCommandNumbers(input);
+
+            Console.WriteLine($"<<{output}>>");
+            */
+
+            int side = 4;
+            for (int s = 2; s <= 11; s++)
+            {
+                side = s;
+                string pad;
+                if (side < 4) pad = "0";
+                else if (side < 11) pad = "00";
+                else pad = "000";
+                for (int i = 0; i < side * side; i++)
+                {
+                    if (i % side == 0 && i != 0) Console.WriteLine();
+                    Console.Write((i + 1).ToString(pad));
+                    Console.Write(" ");
+                }
+                Console.WriteLine("\n");
+                for (int i = 0; i < side * side; i++)
+                {
+                    if (i % side == 0 && i != 0) Console.WriteLine();
+                    Console.Write(MirrorXPublic(i + 1, side).ToString(pad));
+                    Console.Write(" ");
+                }
+                Console.WriteLine("\n---------------------------");
+            }
+            string pad2;
+            if (side < 4) pad2 = "0";
+            else if (side < 11) pad2 = "00";
+            else pad2 = "000";
+            for (int i = 0; i < side * side; i++)
+            {
+                if (i % side == 0 && i != 0) Console.WriteLine();
+                Console.Write((i + 1).ToString(pad2));
+                Console.Write(" ");
+            }
+            Console.WriteLine("\n");
+            for (int i = 0; i < side * side; i++)
+            {
+                if (i % side == 0 && i != 0) Console.WriteLine();
+                Console.Write(MirrorX(i + 1, side).ToString(pad2));
+                Console.Write(" ");
+            }
+        }
+
+        private static bool Between(int boundaryLeft, int value, int boundaryRight) { return boundaryLeft <= value && value <= boundaryRight; }
+
+        private static int MirrorXPublic(int input, int side)
+        {
+            int total = side * side; //total number of buttons
+            int rowNumber = (input - 1) / side; //the row position the input is in the grid; top to bottom from 0
+            int isRowAfterMiddle = Convert.ToInt32(rowNumber > side / 2 - 1); //true => 1; false => 0
+            int i = isRowAfterMiddle * (side - 1) + ((int)Math.Floor(Math.Tan(-isRowAfterMiddle)) + 1) * rowNumber; //isRowAfterMiddle ? i = side - rowNumber - 1 : rowNumber
+            int offset = total - side * (2 * (side - (side - i)) + 1); //i and offset are byproducts of the generalisation. Refer to testQSimp.cs
+            return input + ((int)Math.Floor(Math.Tan(-isRowAfterMiddle)) + 1) * offset; //isRowAfterMiddle ? input - offset : input + offset
+        }
+
+        private static int MirrorX(int input, int side)
+        {
+            return (int)(input + (Math.Floor(Math.Tan(-Convert.ToInt32((input - 1) / side > side / 2 - 1))) + 1) * (side * (side - (2 * (side - (side - (Convert.ToInt32((input - 1) / side > side / 2 - 1) * (side - 1) + (Math.Floor(Math.Tan(-Convert.ToInt32((input - 1) / side > side / 2 - 1))) + 1) * ((input - 1) / side)))) + 1))));
+        }
+
+        private static int MirrorXReduced(int input, int side)
+        {
+            int total = side * side;
+            int row = (input - 1) / side;
+            int cond = Convert.ToInt32(row > side / 2 - 1);
+            int i = (int)(cond * (side - 1) + (Math.Floor(Math.Tan(-cond)) + 1) * row);
+            int offset = total - side * (2 * (side - (side - i)) + 1);
+            //int cond2 = Convert.ToInt32(input > side * (side - (side - i) + 1));
+            return (int)(input + (Math.Floor(Math.Tan(-cond)) + 1) * offset);
+        }
+
+        private static int MirrorXGeneralised(int input, int side)
+        {
+            int total = side * side;
+            for (int i = 0; i <= side-2; i++)
+            {
+                if (input <= side * (side - (side - i) + 1) || input > total - side * (side - (side - i) + 1))
+                {
+                    int offset = total - side * (2 * (side - (side - i)) + 1);
+                    if (input > side * (side - (side - i) + 1)) return input - offset;
+                    else return input + offset;
+                }
+            }
+            return -1;
+        }
+
+        private static int MirrorXHardcoded(int input, int side)
+        {
+            int total = side * side;
+            if (side % 2 != 0)
+            {
+                int centerRow = side / 2 + 1;
+                int centerValue = centerRow + side * (centerRow - 1);
+                if (Between(centerValue - (side - 1) / 2, input, centerValue + (side - 1) / 2)) return input;
+            }
+            int offset = -1;
+            if (input <= side || input > total - side)
+            {
+                offset = total - side;
+                if (input > offset) return input - offset;
+                else return input + offset;
+            }
+            else if (input <= side * 2 || input > total - side * 2)
+            {
+                offset = total - side * 3;
+
+                if (input > side * 2) return input - offset;
+                else return input + offset;
+            }
+            else if (input <= side * 3 || input > total - side * 3)
+            {
+                offset = total - side * 5;
+
+                if (input > side * 3) return input - offset;
+                else return input + offset;
+            }
+            else if (input <= side * 4 || input > total - side * 4)
+            {
+                offset = total - side * 7;
+
+                if (input > side * 4) return input - offset;
+                else return input + offset;
+            }
+            return 0;
+        }
+
+        private static bool ValueObliesThreshold(int threshold, string value)
+        {
+            if (value.Length > 3) value = "999";
+            return Convert.ToInt32(value) <= threshold;
+        }
+
+        private static string ParseCommandNumbers(List<string> input)
+        {
+            int totalButtons = 4;
+            var output = new List<string>();
+            for (int i = 0; i < input.Count; i++)
+            {
+                string buffer = input[i];
+                for (int j = buffer.Length-1; j >= 0; j--)
+                {
+                    if (ValueObliesThreshold(totalButtons, buffer))
+                    {
+                        output.Add(buffer);
+                        break;
+                    }
+                    if (i == input.Count - 1) input.Add("");
+                    input[i + 1] = buffer.Substring(j) + input[i + 1];
+                    buffer = buffer.Substring(0, j);
+                }
+            }
+            return string.Join(" ", output.ToArray());
+        }
+    }
+}
